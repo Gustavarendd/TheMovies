@@ -1,23 +1,24 @@
-﻿<Window x:Class="TheMovies.ReservationView"
+﻿<Window x:Class="TheMovies.Views.ReservationView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheMovies.Views"
         xmlns:viewModels="clr-namespace:TheMovies.ViewModels"
-        mc:Ignorable="d"
-        Title="Reservation" Height="475" Width="600">
+        Title="Reservation"
+        Height="475" Width="600">
     <Window.DataContext>
-        <viewModels:ReservationViewModel/>
+        <viewModels:ReservationViewModel />
     </Window.DataContext>
     <Grid>
         <StackPanel Margin="10"  >
             <Label Content="Select Show:" Margin="-10,0,0,10" Width="300"/>
-            <ComboBox ItemsSource="{Binding TheaterShows}" 
+            <ComboBox ItemsSource="{Binding Shows}" 
                       SelectedItem="{Binding SelectedShow, UpdateSourceTrigger=PropertyChanged}"
-                      DisplayMemberPath="MovieTitle"
+                      DisplayMemberPath="Movie"
                       Width="300"
                       Margin="0,0,0,10"/>
-            <Label Content="Number of Tickets:" Margin="-10,0,0,10" Width="300"/>
+            <Label Content="{Binding AvailableSeats}" Margin="-10,0,0,10" Width="300"/>
             <TextBox Text="{Binding NumberOfTickets, UpdateSourceTrigger=PropertyChanged}"
                        Width="300"
                        Margin="0,0,0,10"/>
@@ -37,7 +38,16 @@
                      Height="200">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding MovieTitle}"/>
+                        <StackPanel>
+                            <TextBlock Text="Show: " FontWeight="Bold" Foreground="Gray"/>
+                            <TextBlock Text="{Binding Show}"/>
+                            <TextBlock Text="Tickets: " FontWeight="Bold" Foreground="Gray"/>
+                            <TextBlock Text="{Binding NumberOfTickets}"/>
+                            <TextBlock Text="Email: " FontWeight="Bold" Foreground="Gray"/>
+                            <TextBlock Text="{Binding CustomerEmail}"/>
+                            <TextBlock Text="Phone number: " FontWeight="Bold" Foreground="Gray"/>
+                            <TextBlock Text="{Binding CustomerPhone}"/>
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>

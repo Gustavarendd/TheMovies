@@ -1,0 +1,106 @@
+﻿<Window x:Class="TheMovies.Views.CreateShowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheMovies.Views"
+        xmlns:viewModels="clr-namespace:TheMovies.ViewModels"
+        mc:Ignorable="d"
+        Title="CreateShowView" Height="600" Width="800">
+
+    <Window.DataContext>
+        <viewModels:CreateShowViewModel/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        
+
+        <StackPanel Margin="10" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <TextBlock Text="Movie: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <ComboBox ItemsSource="{Binding Movies}" 
+                      SelectedItem="{Binding SelectedMovie, UpdateSourceTrigger=PropertyChanged}"
+                      DisplayMemberPath="Title"
+                      Width="200"
+                      Margin="0,0,0,10"/>
+            <TextBlock Text="Duration: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <TextBox Text="{Binding SelectedMovie.Duration, UpdateSourceTrigger=PropertyChanged}" 
+                     IsEnabled="False" Width="200" Margin="0,0,0,10" />
+            <TextBlock Text="Director: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <TextBox Text="{Binding SelectedMovie.Director, UpdateSourceTrigger=PropertyChanged}" 
+                     IsEnabled="False" Width="200" Margin="0,0,0,10" />
+            <TextBlock Text="Genre: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <TextBox Text="{Binding SelectedMovie.Genre, UpdateSourceTrigger=PropertyChanged}" 
+                     IsEnabled="False" Width="200" Margin="0,0,0,10" />
+        </StackPanel>
+
+        <StackPanel Margin="10" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2">
+            <TextBlock Text="Show time:" FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <DatePicker SelectedDate="{Binding ShowTime, UpdateSourceTrigger=PropertyChanged}" 
+                        Width="200" Margin="0,0,0,10" SelectedDateFormat="Long" DisplayDate="08/23/2024 15:25:00" />
+            <TextBlock Text="Cinema: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <TextBox Text="{Binding CinemaName, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,0,10" />
+            <TextBlock Text="Hall: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <TextBox Text="{Binding HallName, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,0,10" />
+            <TextBlock Text="City: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />
+            <TextBox Text="{Binding City, UpdateSourceTrigger=PropertyChanged}" Width="200" Margin="0,0,0,10" />
+        </StackPanel>
+
+        <Button Content="Save Show" Width="100" Command="{Binding SaveCommand}" 
+            Margin="0,10,0,10" Grid.Row="1" Grid.Column="2" />
+       
+        <Button Content="Remove Show" Width="100" Command="{Binding DeleteCommand}" 
+            Margin="0,10,0,10" Grid.Row="1" Grid.Column="1"/>
+
+        
+        <StackPanel Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2">
+            <ListBox ItemsSource="{Binding Shows}" SelectedItem="{Binding SelectedShow}"
+                 MaxHeight="200" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock Text="Title: " FontWeight="Bold" Foreground="Gray"/>
+                            <TextBlock Text="{Binding Movie}" FontWeight="Bold" Margin="10,0,0,0"/>
+                            <!--<TextBlock Text="Duration (minutes): " FontWeight="Bold" Foreground="Gray"/>-->
+                            <!--<TextBlock Text="{Binding Duration}" Margin="10,0,0,0"/>-->
+                            <!--<TextBlock Text="Show Time: " FontWeight="Bold" Foreground="Gray"/>-->
+                            <!--<TextBlock Text="{Binding ShowTime, StringFormat={}{0:yyyy-MM-dd}}" Margin="10,0,0,0"/>-->
+                            <!--<TextBlock Text="Cinema: " FontWeight="Bold" Foreground="Gray"/>-->
+                            <!--<TextBlock Text="{Binding Cinema.Name}" Margin="10,0,0,0"/>-->
+                            <!--<TextBlock Text="Hall: " FontWeight="Bold" Foreground="Gray"/>-->
+                            <!--<TextBlock Text="{Binding Hall.Name}" Margin="10,0,0,0"/>-->
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+
+        <StackPanel Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2">
+            <StackPanel Margin="10">
+                <TextBlock Text="Title: " FontWeight="Bold" Foreground="Gray"/>
+                <TextBlock Text="{Binding SelectedShow.Movie}" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Text="Duration (minutes): " FontWeight="Bold" Foreground="Gray"/>
+                <TextBlock Text="{Binding SelectedShow.Duration}" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Text="Show Time: " FontWeight="Bold" Foreground="Gray"/>
+                <TextBlock Text="{Binding SelectedShow.ShowTime, StringFormat={}{0:yyyy-MM-dd}}" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Text="Cinema: " FontWeight="Bold" Foreground="Gray"/>
+                <TextBlock Text="{Binding SelectedShow.Cinema.Name}" FontWeight="Bold" Margin="10,0,0,0"/>
+                <TextBlock Text="Hall: " FontWeight="Bold" Foreground="Gray"/>
+                <TextBlock Text="{Binding SelectedShow.Hall.Name}" FontWeight="Bold" Margin="10,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -15,8 +15,10 @@ namespace TheMovies.Tests
             var repository = new MovieRepository();
             var movies = new List<Movie>
             {
-                new Movie { Title = "Inception", Duration = 140, Genre = "Action", Director = "Christopher Nolan", PremiereDate= new System.DateTime(2016, 7, 16), TheaterHall = "Hall 1"},
-                new Movie { Title = "The Matrix", Duration = 136, Genre = "Action", Director = "Wachowskis", PremiereDate = new System.DateTime(1999, 3, 31), TheaterHall = "Hall 2" },
+                new Movie { Title = "Inception", Duration = 140, Genre = "Action", 
+                    Director = "Christopher Nolan", PremiereDate= new System.DateTime(2016, 7, 16)},
+                new Movie { Title = "The Matrix", Duration = 136, Genre = "Action", 
+                    Director = "Wachowskis", PremiereDate = new System.DateTime(1999, 3, 31)},
             };
 
             repository.SaveMovies(movies, FilePath);

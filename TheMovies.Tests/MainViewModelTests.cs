@@ -1,4 +1,4 @@
-﻿using OfficeOpenXml;
+﻿
 using TheMovies.Models;
 using TheMovies.ViewModels;
 
@@ -18,7 +18,7 @@ namespace TheMovies.Tests
             viewModel.Genre = "Action";
             viewModel.Director = "Christopher Nolan";
             viewModel.PremierDate = DateTime.Now;
-            viewModel.TheaterHall = "Hall 1";
+          
 
             viewModel.SaveCommand.Execute(null);
             var savedMovie = viewModel.Movies.First();
@@ -26,14 +26,8 @@ namespace TheMovies.Tests
             Assert.AreEqual(140 + 30, savedMovie.Duration + 30);
         }
 
-        private const string TestFilePath = "movies_program.xlsx";
+        private const string TestFilePath = "movies_program.csv";
 
-        [AssemblyInitialize]
-        public static void AssemblyInitialize(TestContext context)
-        {
-            // Set the license context for EPPlus
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        }
 
         [TestMethod]
         public void CanExportToExcel()
@@ -45,8 +39,8 @@ namespace TheMovies.Tests
                 Genre = "Action",
                 Director = "Christopher Nolan",
                 PremierDate = DateTime.Now,
-                TheaterHall = "Hall 1",
-                SelectedMovie = new Movie { Title = "Inception", Duration = 140, Genre = "Action", Director = "Christopher Nolan", PremiereDate = new System.DateTime(2016, 7, 16), TheaterHall = "Hall 1" },
+               
+                SelectedMovie = new Movie { Title = "Inception", Duration = 140, Genre = "Action", Director = "Christopher Nolan", PremiereDate = new System.DateTime(2016, 7, 16) },
             };
 
             viewModel.SaveCommand.Execute(null);

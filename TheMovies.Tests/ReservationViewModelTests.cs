@@ -14,7 +14,7 @@ namespace TheMovies.Tests
         public void CanBookTicketWithCapasity()
         {
             var viewModel = new ReservationViewModel();
-            var show = viewModel.TheaterShows.First();
+            var show = viewModel.Shows.First();
             viewModel.SelectedShow = show;
             viewModel.NumberOfTickets = 5;
             viewModel.CustomerEmail = "test@example.com";
@@ -22,7 +22,7 @@ namespace TheMovies.Tests
 
             viewModel.BookTicketCommand.Execute(null);
 
-            Assert.AreEqual(5, viewModel.SelectedShow.ReservedSeats);
+            Assert.AreEqual(5, viewModel.SelectedShow.Reservations.Count);
             Assert.AreEqual(1, viewModel.Reservations.Count);
         }
 
@@ -32,11 +32,11 @@ namespace TheMovies.Tests
             var viewModel = new ReservationViewModel();
 
           
-            var show = viewModel.TheaterShows.First();
+            var show = viewModel.Shows.First();
             viewModel.SelectedShow = show;
 
            
-            viewModel.NumberOfTickets = show.TotalSeats + 1; // Overbooking by 1
+            viewModel.NumberOfTickets = show.Capacity + 1; // Overbooking by 1
             viewModel.CustomerEmail = "test@example.com";
             viewModel.CustomerPhone = "12345678";
 
@@ -44,7 +44,7 @@ namespace TheMovies.Tests
             viewModel.BookTicketCommand.Execute(null);
 
            
-            Assert.AreEqual(0, viewModel.SelectedShow.ReservedSeats);
+            Assert.AreEqual(0, viewModel.SelectedShow.Reservations.Count);
             Assert.AreEqual(0, viewModel.Reservations.Count);
         }
 
@@ -52,7 +52,7 @@ namespace TheMovies.Tests
         public void CannotBookZeroOrNegativeTickets()
         {
             var viewModel = new ReservationViewModel();
-            var show = viewModel.TheaterShows.First();
+            var show = viewModel.Shows.First();
             viewModel.SelectedShow = show;
             viewModel.NumberOfTickets = 0;
             viewModel.CustomerEmail = "test@example.com";
@@ -60,7 +60,7 @@ namespace TheMovies.Tests
 
             viewModel.BookTicketCommand.Execute(null);
 
-            viewModel.SelectedShow = viewModel.TheaterShows.Last();
+            viewModel.SelectedShow = viewModel.Shows.Last();
             viewModel.SelectedShow = show;
 
             Assert.AreEqual("test@example.com", viewModel.Reservations.First().CustomerEmail);

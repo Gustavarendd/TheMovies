@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Windows.Input;
 using TheMovies.Models;
-using OfficeOpenXml;
+using TheMovies.Views;
 
 namespace TheMovies.ViewModels
 {
@@ -19,7 +19,6 @@ namespace TheMovies.ViewModels
         private string _genre;
         private string _director;
         private DateTime _premierDate = DateTime.Now;
-        private string _theaterHall;
         private Movie _selectedMovie;
 
         public Movie SelectedMovie
@@ -31,7 +30,6 @@ namespace TheMovies.ViewModels
                 Title = value.Title;
                 Duration = value.Duration;
                 Genre = value.Genre;
-                TheaterHall = value.TheaterHall;
                 PremierDate = value.PremiereDate;
                 Director = value.Director;
                 OnPropertyChanged(nameof(SelectedMovie));
@@ -111,25 +109,18 @@ namespace TheMovies.ViewModels
             }
         }
 
-        public string TheaterHall
-        {
-            get => _theaterHall;
-            set
-            {
-                _theaterHall = value;
-                OnPropertyChanged(nameof(TheaterHall));
-            }
-        }
+       
 
         public MainViewModel()
         {
             _movieRepository = new MovieRepository();
             Movies = new ObservableCollection<Movie>(_movieRepository.LoadMovies());
             ExportList = new ObservableCollection<Movie>();
-            SaveCommand = new RelayCommand(SaveMovie);
-            ExportToExcelCommand = new RelayCommand(ExportToExcel);
-            AddToExportListCommand = new RelayCommand(AddToExportList);
+            SaveCommand = new RelayCommand(SaveMovie, CanSave);
+            ExportToExcelCommand = new RelayCommand(ExportToExcel, CanExportToExcel);
+            AddToExportListCommand = new RelayCommand(AddToExportList, CanAddToExportList);
             OpenReservationWindowCommand = new RelayCommand(OpenReservationWindow);
+            OpenCreateShowWindowCommand = new RelayCommand(OpenCreateShowWindow);
         }
 
         public ICommand SaveCommand { get; }
@@ -140,83 +131,92 @@ namespace TheMovies.ViewModels
 
         public ICommand OpenReservationWindowCommand { get; }
 
+        public ICommand OpenCreateShowWindowCommand { get; }
+
         private void OpenReservationWindow()
         {
             ReservationView reservationView = new ReservationView();
             reservationView.ShowDialog();
         }
 
+        private void OpenCreateShowWindow()
+        {
+            CreateShowView createShowView = new CreateShowView();
+            createShowView.ShowDialog();
+        }
+
         private void SaveMovie() 
         {
+            if (!IsMovieValid(new Movie { Title = Title, Duration = Duration, Genre = Genre, Director = Director, PremiereDate = PremierDate }))
+                return;
             var movie = new Movie
             {
+                Id = Movies.Count + 1,
                 Title = Title,
                 Duration = Duration,
                 Genre = Genre,
                 Director = Director,
                 PremiereDate = PremierDate,
-                TheaterHall = TheaterHall
+                
             };
             Movies.Add(movie);
             _movieRepository.SaveMovies(new List<Movie>(Movies));
             ClearInputs();
         }
 
+        private bool CanSave()
+        {
+            return !string.IsNullOrEmpty(Title) && Duration > 0 && !string.IsNullOrEmpty(Genre) && !string.IsNullOrEmpty(Director) && PremierDate != default;
+        }
+
         private void AddToExportList()
         {
-
-            if (SelectedMovie == null)
+            if (SelectedMovie == null || !IsMovieValid(SelectedMovie))
                 return;
 
-            if (!string.IsNullOrEmpty(SelectedMovie.Title) &&
-                !string.IsNullOrEmpty(SelectedMovie.Duration.ToString()) &&
-                !string.IsNullOrEmpty(SelectedMovie.PremiereDate.ToString()) &&
-                !string.IsNullOrEmpty(SelectedMovie.Director) &&
-                !string.IsNullOrEmpty(SelectedMovie.TheaterHall) &&
-                !string.IsNullOrEmpty(SelectedMovie.Genre))
+            if (!ExportList.Contains(SelectedMovie))
             {
-                
-                if (!ExportList.Contains(SelectedMovie))
-                {
-                    ExportList.Add(SelectedMovie);
-                }
+                ExportList.Add(SelectedMovie);
             }
         }
 
-        private void ExportToExcel()
+        private bool CanAddToExportList()
         {
-            if(ExportList.Count <= 0)
+            return SelectedMovie != null && !ExportList.Contains(SelectedMovie);
+        }
+
+        private bool IsMovieValid(Movie movie)
+        {
+            return !string.IsNullOrEmpty(movie.Title) &&
+                   movie.Duration > 0 &&
+                   !string.IsNullOrEmpty(movie.Genre) &&
+                   !string.IsNullOrEmpty(movie.Director) &&
+                   movie.PremiereDate != default;
+        }
+
+        public void ExportToExcel()
+        {
+
+            string filePath = "movies_program.csv";
+            using (var writer = new StreamWriter(filePath))
             {
-                return;
-            }
+                string header = "Title;Duration;Genre;Director;Premiere Date;Theater Hall;Total Duration";
+                writer.WriteLine(header);
 
-            using (var package = new ExcelPackage())
-            {
-                var worksheet = package.Workbook.Worksheets.Add("Movies");
-                worksheet.Cells[1, 1].Value = "Title";
-                worksheet.Cells[1, 2].Value = "Duration";
-                worksheet.Cells[1, 3].Value = "Genre";
-                worksheet.Cells[1, 4].Value = "Director";
-                worksheet.Cells[1, 5].Value = "Premiere Date";
-                worksheet.Cells[1, 6].Value = "Theater Hall";
-                worksheet.Cells[1, 7].Value = "Total Duration";
-
-
-                for (int i = 0; i < ExportList.Count; i++)
+                foreach (Movie movie in ExportList)
                 {
-                    var movie = ExportList[i];
-                    worksheet.Cells[i + 2, 1].Value = movie.Title;
-                    worksheet.Cells[i + 2, 2].Value = movie.Duration;
-                    worksheet.Cells[i + 2, 3].Value = movie.Genre.ToString();
-                    worksheet.Cells[i + 2, 4].Value = movie.Director;
-                    worksheet.Cells[i + 2, 5].Value = movie.PremiereDate.ToString("yyyy-MM-dd"); // Format date
-                    worksheet.Cells[i + 2, 6].Value = movie.TheaterHall;
-                    worksheet.Cells[i + 2, 7].Value = movie.Duration + 30; // Total Duration = Duration + 30
+                    var line = $"{movie.Title};{movie.Duration};{movie.Genre};{movie.Director};{movie.PremiereDate:yyyy-MM-dd}";
+                    writer.WriteLine(line);
+
                 }
 
-                var filePath = "movies_program.xlsx";
-                package.SaveAs(new FileInfo(filePath));
+
             }
+        }
+
+       private bool CanExportToExcel()
+        {
+            return ExportList.Count > 0;
         }
 
         public void ClearInputs() 
@@ -225,7 +225,6 @@ namespace TheMovies.ViewModels
             Duration = 0; 
             Genre = string.Empty;
             Director = string.Empty;
-            TheaterHall = string.Empty;
             PremierDate = new DateTime();
         }
 

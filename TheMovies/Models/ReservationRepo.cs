@@ -9,13 +9,12 @@ namespace TheMovies.Models
 {
     public class ReservationRepo
     {
-        private const string FilePathLoad = "TheMoviesRepo.csv";
-        private const string FilePathSave = "TheMoviesRepoResSave.csv";
+       
+        private const string FilePath = "ReservationRepo.csv";
+        private List<Reservation> reservations = new List<Reservation>();
 
-        public List<Reservation> LoadReservations(string? filepath = FilePathLoad)
+        public List<Reservation> LoadReservations(string? filepath = FilePath)
         {
-            var reservations = new List<Reservation>();
-
             if (File.Exists(filepath))
             {
                 var lines = File.ReadAllLines(filepath);
@@ -27,14 +26,14 @@ namespace TheMovies.Models
                     var values = line.Split(';');
 
                     Reservation reservation = new Reservation
-                    {
-                        MovieTitle = values[3],
-                        ShowTime = DateTime.Parse(values[2]),
-                        TheaterHall = values[0],
-                        NumberOfTickets = int.Parse(values[10]),
-                        CustomerEmail = values[8],
-                        CustomerPhone = values[9],
-                    };
+                    (
+                        int.Parse(values[0]),
+                        values[1],
+                        DateTime.Parse(values[2]),
+                        int.Parse(values[3]),
+                        values[4],
+                        values[5]
+                    );
 
                     reservations.Add(reservation);
                 }
@@ -43,19 +42,60 @@ namespace TheMovies.Models
             return reservations;
         }
 
-        public void SaveReservations(List<Reservation> reservations, string? filepath = FilePathSave)
+        public List<Reservation> LoadReservationsByShow(int showId, string? filepath = FilePath)
         {
-            using (var writer = new StreamWriter(filepath))
-            {
-                string header = "Filmtitel;Forestillingstidspunkt;Biograf;Antal Biletter;Booking Email;Booking telefonnummer";
-                writer.WriteLine(header);
+            var reservations = LoadReservations(filepath);
+            return reservations.Where(r => r.Id == showId).ToList();
+        }
 
-                foreach (var reservation in reservations)
+        public void SaveReservations(List<Reservation> reservations, string? filepath = FilePath)
+        {
+            if (File.Exists(filepath))
+            {
+                List<Reservation> oldReservations = LoadReservations();
+
+                using (var writer = new StreamWriter(filepath))
                 {
-                    string line = $"{reservation.MovieTitle};{reservation.ShowTime};{reservation.TheaterHall};{reservation.NumberOfTickets};" +
-                        $"{reservation.CustomerEmail}; {reservation.CustomerPhone}";
-                    writer.WriteLine(line);
+                    string header = "Id;Forestilling;Forestillingstidspunkt;Antal Biletter;Booking Email;Booking telefonnummer";
+                    writer.WriteLine(header);
+
+                    foreach (Reservation oldReservation in oldReservations)
+                    {
+                        string line = $"{oldReservation.Id};{oldReservation.ShowName};{oldReservation.ShowTime};{oldReservation.NumberOfTickets};" +
+                                $"{oldReservation.CustomerEmail}; {oldReservation.CustomerPhone}";
+                        writer.WriteLine(line);
+                    }
+                    foreach (var reservation in reservations)
+                    {
+                        string line = $"{reservation.Id};{reservation.ShowName};{reservation.ShowTime};{reservation.NumberOfTickets};" +
+                                $"{reservation.CustomerEmail}; {reservation.CustomerPhone}";
+                        writer.WriteLine(line);
+                    }
                 }
+            } else
+            {
+                using (var writer = new StreamWriter(filepath))
+                {
+                    string header = "Id;Forestilling;Forestillingstidspunkt;Antal Biletter;Booking Email;Booking telefonnummer";
+                    writer.WriteLine(header);
+
+                    foreach (var reservation in reservations)
+                    {
+                        string line = $"{reservation.Id};{reservation.ShowName};{reservation.ShowTime};{reservation.NumberOfTickets};" +
+                                $"{reservation.CustomerEmail}; {reservation.CustomerPhone}";
+                        writer.WriteLine(line);
+                    }
+                }
+            }
+        }
+
+        public void DeleteReservation(Reservation reservation)
+        {
+            if (File.Exists(FilePath))
+            {
+                var reservations = LoadReservations(FilePath);
+                reservations.Remove(reservation);
+                SaveReservations(reservations, FilePath);
             }
         }
     }

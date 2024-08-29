@@ -1,10 +1,8 @@
 ﻿using System.Windows;
 
-namespace TheMovies
+namespace TheMovies.Views
 {
-    /// <summary>
-    /// Interaction logic for ReservationView.xaml
-    /// </summary>
+   
     public partial class ReservationView : Window
     {
         public ReservationView()
