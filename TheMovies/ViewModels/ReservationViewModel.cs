@@ -131,7 +131,7 @@ namespace TheMovies.ViewModels
             Reservation reservation = new Reservation
             ( 
                 SelectedShow.Id,
-                SelectedShow.Movie,
+                SelectedShow.MovieTitle,
                 SelectedShow.ShowTime,
                 NumberOfTickets,
                 CustomerEmail,
@@ -181,7 +181,7 @@ namespace TheMovies.ViewModels
             var reservation = new Reservation
             (
                 SelectedShow.Id,
-                SelectedShow.Movie,
+                SelectedShow.MovieTitle,
                 SelectedShow.ShowTime,
                 NumberOfTickets,
                 CustomerEmail,

@@ -23,8 +23,8 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Button Content="Make Reservation" Command="{Binding OpenReservationWindowCommand}" Margin="1,1,1,1" Grid.Column="0"/>
-        <Button Content="Create Show" Command="{Binding OpenCreateShowWindowCommand}" Margin="1,1,1,1" Grid.Column="1"/>
+        <Button Content="Reservations" Command="{Binding OpenReservationWindowCommand}" Margin="1,1,1,1" Grid.Column="0"/>
+        <Button Content="Shows" Command="{Binding OpenCreateShowWindowCommand}" Margin="1,1,1,1" Grid.Column="1"/>
 
         <StackPanel Margin="10" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBlock Text="Title: " FontWeight="Bold" Foreground="Gray" Width="200" Margin="0,0,0,0" />

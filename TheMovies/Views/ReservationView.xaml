@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheMovies.Views"
         xmlns:viewModels="clr-namespace:TheMovies.ViewModels"
-        Title="Reservation"
+        Title="Reservations"
         Height="475" Width="600">
     <Window.DataContext>
         <viewModels:ReservationViewModel />
@@ -15,7 +15,7 @@
             <Label Content="Select Show:" Margin="-10,0,0,10" Width="300"/>
             <ComboBox ItemsSource="{Binding Shows}" 
                       SelectedItem="{Binding SelectedShow, UpdateSourceTrigger=PropertyChanged}"
-                      DisplayMemberPath="Movie"
+                      DisplayMemberPath="MovieTitle"
                       Width="300"
                       Margin="0,0,0,10"/>
             <Label Content="{Binding AvailableSeats}" Margin="-10,0,0,10" Width="300"/>
@@ -40,7 +40,7 @@
                     <DataTemplate>
                         <StackPanel>
                             <TextBlock Text="Show: " FontWeight="Bold" Foreground="Gray"/>
-                            <TextBlock Text="{Binding Show}"/>
+                            <TextBlock Text="{Binding ShowName}"/>
                             <TextBlock Text="Tickets: " FontWeight="Bold" Foreground="Gray"/>
                             <TextBlock Text="{Binding NumberOfTickets}"/>
                             <TextBlock Text="Email: " FontWeight="Bold" Foreground="Gray"/>
